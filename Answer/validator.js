@@ -19,11 +19,10 @@ const validateData = (data) => {
 
 const validateAnswer = (req, res, next) => {
     let errorCode = 400;
-    let data = '';
-    if(req.method === "GET"){
+    let data = "";
+    if (req.method === "GET") {
         data = req.query;
-    }
-    else{
+    } else {
         data = req.body;
     }
     let validationResult = validateData(data);
@@ -34,12 +33,11 @@ const validateAnswer = (req, res, next) => {
             validationResult.error
         );
         next(errorObject);
-    }
-    else {
+    } else {
         next();
     }
-}
+};
 
 module.exports = {
-    validateAnswer
-}
+    validateAnswer,
+};

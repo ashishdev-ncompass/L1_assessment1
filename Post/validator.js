@@ -16,7 +16,6 @@ const schema = Joi.object({
 });
 
 const createPostSchema = Joi.object({
-
     title: Joi.string().required(),
 
     description: Joi.string().required(),
@@ -34,11 +33,10 @@ const validateCreatePost = (data) => {
 
 const validatePost = (req, res, next) => {
     let errorCode = 400;
-    let data = '';
+    let data = "";
     if (req.method === "GET") {
         data = req.query;
-    }
-    else {
+    } else {
         data = req.body;
     }
     if (req.route.path === "/createPost") {
@@ -50,12 +48,10 @@ const validatePost = (req, res, next) => {
                 validationResult.error
             );
             next(errorObject);
-        }
-        else {
+        } else {
             next();
         }
-    }
-    else{
+    } else {
         let validationResult = validateData(data);
         if (validationResult.error) {
             let errorObject = errorObjectCreator(
@@ -64,13 +60,12 @@ const validatePost = (req, res, next) => {
                 validationResult.error
             );
             next(errorObject);
-        }
-        else {
+        } else {
             next();
         }
     }
-}
+};
 
 module.exports = {
-    validatePost
-}
+    validatePost,
+};
