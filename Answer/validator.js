@@ -18,7 +18,7 @@ const validateData = (data) => {
 };
 
 const validateAnswer = (req, res, next) => {
-    var errorCode = 400;
+    let errorCode = 400;
     let data = '';
     if(req.method === "GET"){
         data = req.query;

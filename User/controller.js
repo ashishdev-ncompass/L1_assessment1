@@ -46,7 +46,7 @@ const userLogin = async (req, res, next) => {
 
 
 const getUser = (token) => {
-    var decode = jwt.decode(token);
+    let decode = jwt.decode(token);
     return decode.email;
 }
 

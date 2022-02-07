@@ -3,7 +3,7 @@ const config = require("../Config/config");
 
 const connection = async () => {
     return new Promise(function (resolve, reject) {
-        var con = mysql.createConnection({
+        let con = mysql.createConnection({
             host: config["host_for_db"],
             user: config["user"],
             password: config["password"],

@@ -11,7 +11,7 @@ const validateData = (data) => {
 };
 
 const validateUser = (req, res, next) => {
-    var errorCode = 400;
+    let errorCode = 400;
     var data = req.body;
     let validationResult = validateData(data);
     if (validationResult.error) {
