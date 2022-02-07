@@ -58,7 +58,13 @@ const getAllAnswers = async (req, res, next) => {
         }
         let startingIndex = 2*(pageNumber-1);
         let endingIndex = 2*pageNumber;
-        let query = `select ${data.column} from answer as a inner join post as p on p.post_id = a.post_id where p.title like '%${data.title}%' order by a.created_time desc`;
+        let query = '';
+        if(data.column != null){
+            query = `select ${data.column} from answer as a inner join post as p on p.post_id = a.post_id where p.title like '%${data.title}%' order by a.created_time desc`;
+        }
+        else{
+            query = `select a.* from answer as a inner join post as p on p.post_id = a.post_id where p.title like '%${data.title}%' order by a.created_time desc`;
+        }
         result = await executeQuery(query).catch(function reject(error) {
             throw error;
         });
