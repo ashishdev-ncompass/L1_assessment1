@@ -16,6 +16,7 @@ const connection = async () => {
     });
 };
 
+
 exports.executeQuery = async (query, inputData = []) => {
         let con = await connection().catch(function reject(error,code) {
             errorCode = code;
