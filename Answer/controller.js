@@ -4,8 +4,11 @@ const { errorObjectCreator } = require("../Utilities/errorHandler");
 const moment = require("moment");
 const { getUserId } = require("../User/controller");
 
-// Default error code is set to 500 and it is changed whenever needed.
-var errorCode = 500;
+
+
+const errorCode = 500;
+
+
 
 const createAnswer = async (req, res, next) => {
     try {
@@ -15,19 +18,19 @@ const createAnswer = async (req, res, next) => {
             let token = req.header("authorization").split(" ")[1];
             const userId = await getUserId(token);
             const inputData = [[[userId, data.postId, data.answer, currentTime]]];
-
             let query = `insert into answer(user_id, post_id, answer, created_time) values ?`;
-            let result = await executeQuery(query, inputData).catch(function reject(
-                error
-            ) {
-                throw error;
-            });
-
+            let result = await executeQuery(query, inputData).catch(
+                function reject(error) {
+                    throw error;
+                }
+            );
             return res.json(makeResponse(`Answer submitted successfully`));
-        } else {
+        }
+        else {
             throw new Error("post not found");
         }
-    } catch (error) {
+    }
+    catch (error) {
         let errorObject = errorObjectCreator(
             "error while creating post",
             errorCode,
@@ -37,40 +40,32 @@ const createAnswer = async (req, res, next) => {
     }
 };
 
+
+
 const getAllAnswers = async (req, res, next) => {
     try {
-        // extracting data from query parameters
         let data = req.query;
         let pageNumber = data.page;
         let result = [];
         if (pageNumber == null) {
             throw new Error("page number not provided");
         }
-        let endingIndex = 2 * (pageNumber - 1);
-        let query = "";
-        let inputdata = [`%${data.title}%`,endingIndex]
-        if (data.column != null) {
-            query = `select ${data.column} from answer as a inner join post as p on p.post_id = a.post_id where p.title like ? order by a.created_time desc limit 2 offset ?`;
-        } else {
-            query = `select a.* from answer as a inner join post as p on p.post_id = a.post_id where p.title like ? order by a.created_time desc limit 2 offset ?`;
-        }
-        result = await executeQuery(query,inputdata).catch(function reject(error) {
-            throw error;
-        });
-
-        // checking if object result is empty or not
+        let offset = 2 * (pageNumber - 1);
+        let query = getAnswerQuery(data, offset);
+        result = await executeQuery(query[1], query[0]).catch(
+            function reject(error) {
+                throw error;
+            }
+        );
         if (Object.keys(result).length == 0) {
             errorCode = 404;
             throw new Error("answer not found");
-        } else {
-            return res.json(
-                makeResponse(
-                    "query successful!!",
-                    result
-                )
-            );
         }
-    } catch (error) {
+        else {
+            return res.json(makeResponse("query successful!!", result));
+        }
+    }
+    catch (error) {
         let errorObject = errorObjectCreator(
             "error while reading answer by post id",
             errorCode,
@@ -80,22 +75,50 @@ const getAllAnswers = async (req, res, next) => {
     }
 };
 
+
+
+const getAnswerQuery = (data, offset) => {
+    let inputdata = [];
+    let query = "";
+    if (data.column != null) {
+        data.column = data.column.replace(/\s+/g, '');
+        let columnNames = data.column.split(',');
+        for(let i=0;i<columnNames.length;i++){
+            columnNames[i] = `answer.${columnNames[i]}`;
+        }
+        inputdata = [columnNames,`%${data.title}%`, offset]
+        query = `select ?? from answer left join post on post.post_id = answer.post_id 
+            where post.title like ? order by answer.created_time desc limit 2 offset ?`;
+    }
+    else {
+        inputdata = [`%${data.title}%`, offset]
+        query = `select answer.answer_id, answer.user_id, answer.post_id, 
+            answer.answer, answer.created_time from answer left join post
+            on post.post_id = answer.post_id where post.title like ? 
+            order by answer.created_time desc limit 2 offset ?`;
+    }
+    return [inputdata,query];
+}
+
+
+
 const checkPost = async (postId) => {
     const inputData = [postId];
     let query = `select * from post where post_id = ?`;
-    let result = await executeQuery(query, inputData).catch(function reject(
-        error
-    ) {
-        throw error;
-    });
-
-    // checking if object result is empty or not
+    let result = await executeQuery(query, inputData).catch(
+        function reject(error) {
+            throw error;
+        }
+    );
     if (Object.keys(result).length == 0) {
         return false;
-    } else {
+    }
+    else {
         return true;
     }
 };
+
+
 
 module.exports = {
     createAnswer,

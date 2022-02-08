@@ -9,16 +9,18 @@ const validateToken = async (req, res, next) => {
     try {
         try {
             var token = req.header("authorization").split(" ")[1];
-        } catch (error) {
-                let errorObject = errorObjectCreator(
-                    "Log in and provide token to access data !!!",
-                    401,
-                    error
-                );
-                next(errorObject);
+        } 
+        catch (error) {
+            let errorObject = errorObjectCreator(
+                "Log in and provide token to access data !!!",
+                401,
+                error
+            );
+            next(errorObject);
         }
         const verified = jwt.verify(token, jwtSecretKey);
         var email = verified.email;
+
         if (verified) {
             let availability = await checkUser(email);
             if (availability){
@@ -27,10 +29,12 @@ const validateToken = async (req, res, next) => {
             else{
                 throw new Error("user not found!!");
             }            
-        } else {
+        } 
+        else {
             throw new Error("user not verified!!");
         }
-    } catch (error) {
+    } 
+    catch (error) {
         if (error.message === "jwt expired") {
             var errorObject = errorObjectCreator(
                 "User token expired !!!",
@@ -38,7 +42,8 @@ const validateToken = async (req, res, next) => {
                 new Error("token expired")
             );
            
-        } else {
+        } 
+        else {
             var errorObject = errorObjectCreator(
                 "token verification failed",
                 401,

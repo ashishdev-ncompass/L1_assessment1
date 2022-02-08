@@ -1,7 +1,8 @@
 const Joi = require("joi");
 const { errorObjectCreator } = require("../Utilities/errorHandler");
 
-const schema = Joi.object({
+const schema = Joi.object(
+{
     postId: Joi.number().min(10000),
 
     answer: Joi.string(),
@@ -13,29 +14,42 @@ const schema = Joi.object({
     page: Joi.number(),
 });
 
-const validateData = (data) => {
+const validateData = (data) => 
+{
     return schema.validate(data);
 };
 
-const validateAnswer = (req, res, next) => {
+const validateAnswer = (req, res, next) => 
+{
+
     let errorCode = 400;
     let data = "";
-    if (req.method === "GET") {
+
+    if (req.method === "GET") 
+    {
         data = req.query;
-    } else {
+    } 
+    else 
+    {
         data = req.body;
     }
+
     let validationResult = validateData(data);
-    if (validationResult.error) {
+
+    if (validationResult.error) 
+    {
         let errorObject = errorObjectCreator(
             "error in validation !!!!",
             errorCode,
             validationResult.error
         );
         next(errorObject);
-    } else {
+    } 
+    else 
+    {
         next();
     }
+    
 };
 
 module.exports = {

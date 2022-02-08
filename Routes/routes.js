@@ -22,15 +22,11 @@ router.use(express.static("public"));
 router.post("/login", validateUser, userLogin);
 
 router.post("/createPost", validateToken, validatePost, createPost);
-
 router.post("/updatePost", validateToken, validatePost, updatePost);
-
 router.post("/deletePost", validateToken, validatePost, deletePost);
-
 router.get("/getPostDetails", validatePost, getPostDetails);
 
 router.post("/createAnswer", validateToken, validateAnswer, createAnswer);
-
 router.get("/getAllAnswers", validateAnswer, getAllAnswers);
 
 module.exports = router;
