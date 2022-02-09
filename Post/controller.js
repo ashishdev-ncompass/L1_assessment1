@@ -13,25 +13,23 @@ var errorCode = 500;
 
 const getPostDetailsResult = async (data, index) => {
     let result = [];
+    let query = "";
+    inputData = [];
     if (data.tag == null && data.title == null) {
-        let inputData = [index];
-        let query = `select * from post order by created_time desc limit 2 offset ?`;
-        result = await executeQuery(query, inputData).catch(
-            function reject(error) {
-                throw error;
-            }
-        );
+        inputData = [index];
+        query = `select * from post order by created_time desc limit 2 offset ?`;
+        
     }
     else {
-        let inputData = [`%${data.title}%`, `%${data.tag}%`, index];
-        let query = `select * from post where title like ? or tag like ? 
+        inputData = [`%${data.title}%`, `%${data.tag}%`, index];
+        query = `select * from post where title like ? or tag like ? 
         order by created_time desc limit 2 offset ?`;
-        result = await executeQuery(query, inputData).catch(
-            function reject(error) {
-                throw error;
-            }
-        );
     }
+    result = await executeQuery(query, inputData).catch(
+        function reject(error) {
+            throw error;
+        }
+    );
     return result;
 }
 
